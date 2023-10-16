@@ -17,6 +17,7 @@ function useFormHook(formInitial = {}) {
   };
   // retorno en un objeto el estado del formulario y el evento que captura los cambios del input
   return {
+    ...form,
     form,
     onChange,
   };

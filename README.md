@@ -486,4 +486,156 @@ Sirve para mostrar y ocultar codigo cuando es necesario, simplemente para que la
   }, [listaDeNumeros]);
 ```
 
-**UseCallBack**
+**Reducer y useReducer**
+Redux, es una nube de almacenamiento (una forma de decir), donde se almacena la informacion en un solo lugar
+el useReducer, se ocupa para componentes funcionales, toma dos argumentos o parametros, una funcion reductora y un estado inicial. La funcion reductora determina que hacer dependiendo de lo que se le pida.
+Ejemplo sensicllo:
+
+```javascript
+import React, { useReducer } from "react";
+
+// Reducer function
+const reducer = (state, action) => {
+  switch (action.type) {
+    case "INCREMENT":
+      return { count: state.count + 1 };
+    case "DECREMENT":
+      return { count: state.count - 1 };
+    default:
+      return state;
+  }
+};
+
+function Counter() {
+  // Inicializamos el estado y le pasamos el reductor
+  const [state, dispatch] = useReducer(reducer, { count: 0 });
+
+  return (
+    <div>
+      <p>Count: {state.count}</p>
+      <button onClick={() => dispatch({ type: "INCREMENT" })}>Increment</button>
+      <button onClick={() => dispatch({ type: "DECREMENT" })}>Decrement</button>
+    </div>
+  );
+}
+```
+
+**React Router DOM**
+Es para crear rutas que no mande a diferentes secciones de la app.
+Para instalar npm i react-router-dom
+
+Para usar se debe ir al archivo main.jsx, agregar BrowserReact y envolver toda la app
+
+```javascript
+<BrowserRouter>
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+  ,
+</BrowserRouter>
+```
+
+Para crear las rutas
+Se debe encerrar en Routes, dentro de routes se crea cada ruta que se necesite,
+path, es la direccion a donde queremos, eso depede de que componente o necesidad,
+element es el elemento que se va a mostrar en esa ruta
+
+```javascript
+Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="" />
+      </Routes>
+```
+
+Para que funcione, se debe ir a donde estan esos botones o barra de navegacion y configurar.
+Se coloca dentro de una etiqueta Link que tiene como atributo to="direccion de pagina", aca va la misma ruta que se coloco en route
+
+```javascript
+<Link to="/" className="nav-link active" aria-current="page">
+                Home
+              </Link>
+              <Link to="/about" className="nav-link">
+                About
+              </Link>
+              <Link to="/contact" className="nav-link">
+                Contact
+              </Link>
+```
+
+**useContext**
+Es similar a redux, creas un contexto global donde podes pasar informacion a todos tus componentes, sin necesidad de pasarle por props
+
+Creamos el contexto
+no necesariamente deberia estar en un archivo separado, depende de cada uno
+
+```javascript
+import { createContext } from "react";
+
+export const UsuarioContext = createContext();
+```
+
+aca se define el usuario o contexto, se le pasa children como propiedad, para que todos los componentes puedan acceder al contenido del contexto
+
+```javascript
+import { useState } from "react";
+import { UsuarioContext } from "./UserContext";
+
+export const UsuarioProvider = ({ children }) => {
+  //esto se va a ir actualizando por eso se usa el estado
+  const [usuario, setUsuario] = useState({});
+  return (
+    //se le pasa como propiedad para usar
+    <UsuarioContext.Provider value={{ usuario, setUsuario }}>
+      {children}
+    </UsuarioContext.Provider>
+  );
+};
+```
+
+Se encierra dentro de usuarioProvider, que componentes tendran acceso al contexto
+
+```javascript
+import { UsuarioProvider } from "./routes/UsuarioProvider";
+function App() {
+  return (
+    <UsuarioProvider>
+      <h1>Aplicacion de enrutamiento</h1>
+      <NavBar />
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="" />
+      </Routes>
+    </UsuarioProvider>
+  );
+}
+
+export default App;
+```
+
+Para usar el contexto
+
+```javascript
+import { UsuarioContext } from "./UserContext";
+
+export default function Login() {
+  const initislState = {
+    nombre: "",
+    tecnologia: "",
+    email: "",
+    redes: "",
+  };
+  const { form, onChange, nombre, tecnologia, email, redes } =
+    useFormHook(initislState);
+  const { setUsuario } = useContext(UsuarioContext);
+  const onSubmit = (event) => {
+    event.preventDefault();
+    setUsuario(form);
+  };
+}
+```
